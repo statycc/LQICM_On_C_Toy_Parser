@@ -17,7 +17,7 @@ sys.path.extend(['.', '..'])
 
 from pycparser import parse_file, c_parser, c_ast, c_generator
 
-DEBUG = True
+DEBUG = False
 
 text = r"""
 int main(){
