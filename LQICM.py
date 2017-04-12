@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+#
 # -----------------------------------------------------------------
 # LQICM_On_C_Toy_Parser: LQICM.py
 #
@@ -14,6 +16,8 @@ import sys
 sys.path.extend(['.', '..'])
 
 from pycparser import parse_file, c_parser, c_ast, c_generator
+
+DEBUG = True
 
 text = r"""
 int main(){
@@ -234,24 +238,60 @@ def exist_rel(vars1,vars2):
             return True
     return False
 
-def new_list_dep(while_stmt,command):
+def iscond(node):
+    if(isinstance(node,c_ast.While)):
+	return True
+    if(isinstance(node,c_ast.If)):
+	return True
+    return False
+
+def new_list_dep(while_stmt,command,i):
     """Return a list of dep
         for the given command
     """
     depList = []
-    ind=0
+#   ind=0
     relsC=compute_rel(command)
     (InC,OutC) = relsC.in_out()
     # print("inC="+str(InC))
-    # FIXME TO optimize
+    # FIXME TO optimize	
+    tabcomm=[]
+    tabInOut=[]
     for n in while_stmt.block_items:
         relsN=compute_rel(n)
-        (InN,OutN) = relsN.in_out()
-        # print("OutN="+str(OutN))
-        if exist_rel(InC,OutN):
-            # print("exist rel with "+str(ind))
-            depList.append(ind)
-        ind+=1
+        InOut = relsN.in_out()
+        tabcomm.append(n)
+	tabInOut.append(InOut)
+    tabInOutOrdered=[]
+    for j in range(len(tabInOut)):
+	if j<i:
+		k=i-1-j
+	else:
+		k=len(tabInOut)+i-1-j
+	tabInOutOrdered.append(tabInOut[k])
+    for var in InC:
+	found=False
+	k=0
+	while k<len(tabInOutOrdered) and not found:
+		if var in tabInOutOrdered[k][1]:
+			if k<i:
+				ind=i-1-k
+			else:
+				ind=len(tabInOutOrdered)+i-1-k
+			if not iscond(tabcomm[ind]):
+				found=True
+			depList.append(ind)
+		k=k+1
+#
+#
+#   for n in while_stmt.block_items:
+#       relsN=compute_rel(n)
+#       (InN,OutN) = relsN.in_out()
+#       # print("OutN="+str(OutN))
+#       if exist_rel(InC,OutN):
+#           # print("exist rel with "+str(ind))
+#           depList.append(ind)
+#       ind+=1
     return depList
 
 def list_list_dep(node_while):
@@ -259,8 +299,13 @@ def list_list_dep(node_while):
         for each command (order of block_items in the while_stmt
     """
     listList = []
+    i=0
     for n in node_while.stmt.block_items:
-        listList.append(new_list_dep(node_while.stmt,n))
+        listList.append(new_list_dep(node_while.stmt,n,i))
+        i=i+1
+    if DEBUG:
+        print("Dependencies:")
+        print(listList)
     return listList
 
 def init_tabDeg(while_stmt):
@@ -287,18 +332,18 @@ def comput_deg(tabDeg,i,lldep):
             tabDeg[i]=1
             return 1
         else:
-            ind=1
             deg=-1
+            infinite = False
             for l in lldep[i]:
                 tabDeg[l] = comput_deg(tabDeg,l,lldep)
-                if(tabDeg[l]>=deg):
+                if tabDeg[l]==-1:
+                    return -1
+                if (tabDeg[l]>deg) and l<i:
                     deg=tabDeg[l]
-                    ind=l
-            # [ind,deg] = max_deg_of_list(lldep[i])
-            if deg!=-1 and ind>i:
-                tabDeg[i]=deg+1
-            else: tabDeg[i]=deg
-            return tabDeg[i]
+                if (tabDeg[l]>=deg) and l>i:
+                    deg=tabDeg[l]+1
+            tabDeg[i]=deg
+            return deg
 
 def rename_node(node,k,j,deg):
     to_be_renamed=node.stmt.block_items[k]
@@ -373,6 +418,9 @@ def comput_tabDeg(myWhile):
     tabDeg = init_tabDeg(myWhile.node_while.stmt)
     for i in range(0,len(myWhile.node_while.stmt.block_items)):
         comput_deg(tabDeg,i,ll)
+    if DEBUG:
+        print("Dependence degrees:")
+        print(tabDeg)
     return tabDeg
 
 def opt(myWhile):
