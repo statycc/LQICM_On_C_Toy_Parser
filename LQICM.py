@@ -17,7 +17,7 @@ sys.path.extend(['.', '..'])
 
 from pycparser import parse_file, c_parser, c_ast, c_generator
 
-DEBUG = False
+DEBUG = True
 
 text = r"""
 int main(){
@@ -53,6 +53,255 @@ ast = parse_file(filename, use_cpp=True)
 # ast.ext[0].show()
 # print(ast.ext[0])
 
+Keys = [(0,0),(1,0),(0,1),(1,1)]
+
+dicProd = { (0,0):
+		{(0,0): (0,0), (1,0): (0,0), (0,1): (0,0), (1,1): (0,0)},
+            (1,0):
+		{(0,0): (0,0), (1,0): (1,0), (0,1): (0,1), (1,1): (1,1)},
+            (0,1):
+		{(0,0): (0,0), (1,0): (0,1), (0,1): (0,1), (1,1): (0,1)},
+            (1,1):
+		{(0,0): (0,0), (1,0): (1,1), (0,1): (0,1), (1,1): (1,1)}
+	}
+            
+dicSum = { (0,0):
+		{(0,0): (0,0), (1,0): (1,0), (0,1): (0,1), (1,1): (1,1)},
+            (1,0):
+		{(0,0): (1,0), (1,0): (1,0), (0,1): (1,1), (1,1): (1,1)},
+            (0,1):
+		{(0,0): (0,1), (1,0): (1,1), (0,1): (0,1), (1,1): (1,1)},
+            (1,1):
+		{(0,0): (1,1), (1,0): (1,1), (0,1): (1,1), (1,1): (1,1)}
+	}
+
+def Prod(a,b):
+	return dicProd[a][b]
+
+def Sum(a,b):
+	return dicSum[a][b]
+
+Zero = (0,0)
+
+Unit = (1,0)
+
+
+
+def MatProd(M1,M2,prod=Prod,sum=Sum,zero=Zero):
+	res=[]
+	for i in range(len(M1)):
+		res.append([])
+		for j in range(len(M2)):
+			new = zero
+			for k in range(len(M1))
+				new = sum(new,prod(M1[i][k],M2[k][j]))
+			res[i].append(new)
+	return res
+
+def MatSum(M1,M2,sum=Sum):
+	res=[]
+	for i in range(len(M1)):
+		res.append([])
+		for j in range(len(M1)):
+			res[i].append(sum(M1[i][j],M2[i][j]))
+	return res
+
+def initMatrix(len,zero=Zero):
+	res = []
+	for i in range(len):
+		res.append([])
+		for j in range(len):
+			res[i].append(zero)
+	return res
+
+def extendMatrix(Mat,range,zero=Zero,unit=Unit):
+	res = []
+	for i in range(range):
+		res.append([])
+		for j in range(range):
+			if i<len(Mat) and j<len(Mat):
+				res[i].append(Mat[i][j])
+			else:
+				if i==j:
+					res[i].append(unit)
+				else:
+					res[i].append(zero)
+	return res
+
+
+def printMatrix(Mat):
+	for i in range(len(Mat)):
+		line = ""
+		for j in range(len(Mat)):
+			line = line+"   "+str(Mat[i][j])
+		print(line)
+	return 0
+
+def printRel(Rel):
+	print("")
+	for i in range(len(Rel[1])):
+		line = str(Rel[0][i])+"   |   "
+		for j in range(len(Mat)):
+			line = line+"   "+str(Mat[i][j])
+		print(line)
+	return 0	
+
+def homogeneisation(R1,R2,zero=Zero,unit=Unit): # Relations are tuples (v,M) of a list of variables and a matrix
+	var_indices = []
+	var2 = []
+	for v in R2[0]:
+		var2.append(v)
+	for v in R1[0]:
+		found = False
+		for j in range(len(R2[0])):
+			if R2[0][j]==v:
+				var_indices.append(j)
+				found = True
+				var2.remove(v)
+		if not found:
+			var_indices.append(-1)
+	for v in var2:
+		var_indices.append(R2[0].index(v))
+	M1_extended=extendMatrix(R1[1],len(var2))
+	var_extended=R1[0]+var2
+	M2_extended = []
+	for i in range(len(var_extended)):
+		M2_extended.append([])
+		i_in = var_indices[i]!=-1
+		for j in range(len(var_extended)):
+			if not i_in and i==j:
+				M2_extended[i].append(unit)
+			elif i_in and var_indices[j]!=-1:
+				M2_extended[i].append(R2[1][var_indices[i]][var_indices[j]])
+			else:
+				M2_extended[i].append(zero)
+	if DEBUG:
+		printRel((R1))
+		printRel((R2))
+		printRel((var_extended,M1_extended))
+		printRel((var_extended,M2_extended))
+	return ((var_extended,M1_extended),(var_extended,M2_extended))
+			
+
+def compositionRelations(R1,R2):
+	(eR1,eR2)=homogeneisation(R1,R2)
+        return (eR1[0],MatProd(eR1[1],eR2[1]))
+
+def sumRelations(R1,R2): 
+	(eR1,eR2)=homogeneisation(R1,R2)
+        return (eR1[0],MatSum(eR1[1],eR2[1]))
+
+def Out_Rel(R,zero=Zero,unit=Unit):
+	out_tab=[]
+	for i in range(len(R[1])):
+		empty=True
+		j=0
+		while empty and j<len(R[1]):
+			if R[1][j][i]!=zero:
+				empty=False
+			if R[1][j][i]!=unit:
+				out_tab(R[0][i])
+			j=j+1
+		if empty:
+			out_tab(R[0][i])
+	return out_tab
+
+def In_Rel(R,zero=Zero):
+	in_tab=[]
+	for i in range(len(R[1])):
+		empty=True
+		j=0
+		while empty and j<len(R[1]):
+			if R[1][i][j]!=zero:
+				empty=False
+				in_tab.append(R[0][i])
+			j=j+1
+	return in_tab
+
+def In_Out_Rel(R,zero=Zero,unit=Unit):
+	return (In(R,zero),Out(R,zero,unit))
+
+
+def isequalRel(R1,R2):
+	if set(R1[0])!=set(R2[0]):
+		return False
+	(eR1,eR2)=homogeneisation(R1,R2)
+	for i in range(len(eR1[1])):
+		for j in range(len(eR1[1])):
+			if eR1[1][i][j]!=eR2[1][i][j]:
+				return False
+	return True
+
+def identityRel(var,unit=Unit,zero=Zero):
+	Id=[]
+	for i in len(var):
+		Id.append([])
+		for j in len(var):
+			if i==j:
+				Id[i][j]=unit
+			else:
+				Id[i][j]=zero
+	return (var,Id)
+
+class Relation():
+    def __init__(self,variables):
+        self.variables = variables
+        self.matrix = InitMatrix(len(variables))
+
+    def ajoutPropag(self,v,w): # v,w indices of variables
+        self.matrix[v][w]=Sum(self.matrix[v][w],(1,0))
+
+    def ajoutVar(self,x):
+        if x not in self.variables:
+		self.variables.append(x)
+		extendMatrix(self.matrix,1)
+
+    def ajoutDep(self,v,w): # v,w indices of variables
+        self.matrix[v][w]=Sum(self.matrix[v][w],(0,1))
+
+    def ajoutInit(self,v): # v indice of variable
+	for w in range(len(variables)):
+		self.matrix[v][w]=Prod(self.matrix[v][w],(0,0))
+
+    def composition(self,Rel):
+        (var,Mat)=compositionRelations((self.variables,self.matrix),(Rel.variables,Rel.matrix))
+	compo = Relation(var)
+	compo.matrix = Mat
+	return compo
+
+    def sumRel(self,Rel):
+	(var,Mat)=sumRelations((self.variables,self.matrix),(Rel.variables,Rel.matrix))
+	result = Relation(var)
+	result.matrix = Mat
+	return result
+
+    def show(self):
+        printRel((self.variables,self.matrix))
+
+    def out(self):
+	return Out_Rel((self.variables,self.matrix))
+
+    def in(self):
+	return In_Rel((self.variables,self.matrix))
+
+    def in_out(self):
+	return In_Out_Rel((self.variables,self.matrix))
+
+    def equal(self,Rel):
+	return isequalRel((self.variables,self.matrix),(Rel.variables,Rel.matrix))
+
+    def fixpoint(self):
+	end = True
+	(v,M) = identityRel(self.variables)
+	Fix = Relation(v)
+	Current = Relation(v)
+	Fix.matrix=M
+	Current.matrix=M
+	while not True:
+		Current = Current.composition(self)
+		Fix = Fix.sumRel(Current)
+	return Fix
+
 class MyWhile():
     def __init__(self, node_while, parent, isOpt, subWhiles):
         self.node_while = node_while
@@ -67,120 +316,7 @@ class MyWhile():
         for l in self.subWhiles:
             l.show('\t')
 
-class Relation():
-    def __init__(self,variables):
-        self.variables = variables
-        self.propag = variables[:]
-        self.dep = []
-        self.init = []
 
-    def ajoutPropag(self,v):
-        self.propag.append(v)
-        self.ajoutVar(v)
-
-    def ajoutVar(self,x):
-        if x not in self.variables:
-            self.variables.append(x)
-
-    def ajoutDep(self,x,y):
-        if (x,y) not in self.dep:
-            self.dep.append((x,y))
-            self.ajoutVar(x)
-            self.ajoutVar(y)
-            if y in self.propag:
-                self.propag.remove(y)
-
-    def ajoutInit(self,x):
-        if x not in self.init:
-            self.init.append(x)
-            self.ajoutVar(x)
-            if x in self.propag:
-                self.propag.remove(x)
-
-    def removeDep(self,x,y):
-        self.dep.remove((x,y))
-
-    def show(self):
-        print("Variables:")
-        print(self.variables)
-        print("Dépendences:")
-        print(self.dep)
-        print("Propagations:")
-        print(self.propag)
-
-    def composition(self,r2):
-        if len(self.variables) == 0:
-            return r2
-        if len(r2.variables) == 0:
-            return self
-        listVar = list(set(self.variables + r2.variables))
-        comp = Relation(listVar)
-        for (x2,y2) in r2.dep:
-            if x2 not in self.variables:
-                comp.ajoutDep(x2,y2)
-            elif x2 in self.propag:
-                comp.ajoutDep(x2,y2)
-            for (x1,y1) in self.dep:
-                if y1 == x2:
-                    comp.ajoutDep(x1,y2)
-                if y1 not in r2.variables:
-                    comp.ajoutDep(x1,y1)
-                elif y1 in r2.propag:
-                    comp.ajoutDep(x1,y1)
-        return comp
-
-    def sumRel(self,r2): # Revoir la sum plus tard…
-        listVar = list(set(self.variables + r2.variables))
-        sumRel = Relation([])
-        sumRel.variables = listVar
-        sumRel.propag = list(set(self.propag + r2.propag))
-        sumRel.dep = list(set(self.dep + r2.dep))
-        # sumRel.init = list(set(self.init + r2.init))
-        return sumRel
-
-    def out(self):
-        out = []
-        for (x,y) in self.dep:
-            if y not in out:
-                out.append(y)
-        return out
-
-    def in_out(self):
-        out = self.init[:]
-        in_ = []
-        for (x,y) in self.dep:
-            if y not in out:
-                out.append(y)
-            if x not in in_:
-                in_.append(x)
-        return (in_,out)
-
-    def rm_out(self,vars_to_rm):
-        for (x,y) in self.dep:
-            if y in vars_to_rm:
-                self.removeDep(x,y)
-
-    def rm_fix_dep(self):
-        for (x,y) in self.dep:
-            if x == y:
-                self.dep.remove((x,y))
-
-    def extendRel(self,cond):
-        vs = list_var(cond)
-        extendRel = self
-        # print("self.out ="+str(self.out()))
-        for v in vs:
-            extendRel.ajoutPropag(v)
-            for y in self.out():
-                extendRel.ajoutDep(v,y)
-        return extendRel
-
-    def equal(self,r2):
-        if not equalList(self.dep,r2.dep):
-            return False
-        if not equalList(self.propag,r2.propag):
-            return False
-        return True
 
 class varVisitor(c_ast.NodeVisitor):
     def __init__(self):
@@ -282,16 +418,6 @@ def new_list_dep(while_stmt,command,i):
 				found=True
 			depList.append(ind)
 		k=k+1
-#
-#
-#   for n in while_stmt.block_items:
-#       relsN=compute_rel(n)
-#       (InN,OutN) = relsN.in_out()
-#       # print("OutN="+str(OutN))
-#       if exist_rel(InC,OutN):
-#           # print("exist rel with "+str(ind))
-#           depList.append(ind)
-#       ind+=1
     return depList
 
 def list_list_dep(node_while):
