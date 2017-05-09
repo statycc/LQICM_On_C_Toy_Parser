@@ -9,3 +9,20 @@ quasi-invariant inner loop.
 ## Prerequisites 
 
 This uses the [pycparser](https://github.com/eliben/pycparser).
+
+## Installation 
+
+Install [pycparser](https://github.com/eliben/pycparser).
+
+Run on examples:
+
+    $ python LQICM.py yourfile.c
+
+Example:
+
+    $ python LQICM.py c_files/example2.c
+
+Remark:
+
+The `.c` file given needs to contain only functions (no
+`includes` or other macros etc…)
