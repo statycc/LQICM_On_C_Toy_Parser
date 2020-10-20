@@ -1,0 +1,63 @@
+>>> from LQICM import optimize
+
+>>> optimize("examples/DoWhile.c")
+[([(1, 1, 'i')], [1, -1])]
+
+>>> optimize("examples/For.c")
+[([(1, 0, 'b'), (2, 1, 'c'), (3, 3, 'd'), (4, 4, 'i')], [3, 2, 1, -1, -1])]
+
+>>> optimize("examples/While.c")
+[([(1, 0, 'b'), (2, 1, 'c'), (3, 1, 'c'), (4, 1, 'c'), (5, 4, 'e'), (6, 6, 'd')], [4, 3, 1, 1, 2, 1, -1])]
+
+>>> optimize("examples/NestedDoWhile.c")
+[([(1, 0, 'b'), (2, 1, 'c'), (4, 4, 'd'), (4, 5, 'd'), (4, 6, 'd'), (5, 4, 'd'), (5, 6, 'd'), (6, 4, 'd'), (7, 4, 'e'), (7, 5, 'e'), (7, 6, 'e'), (7, 7, 'e')], [3, 2, 1, 1, -1, -1, -1, -1])]
+
+>>> optimize("examples/NestedFor.c")
+[([(1, 0, 'b'), (2, 1, 'c'), (3, 4, 'i'), (3, 5, 'i'), (4, 4, 'e'), (4, 5, 'e'), (4, 5, 'i'), (5, 4, 'e'), (5, 5, 'e'), (6, 4, 'd'), (6, 5, 'd'), (6, 6, 'd')], [3, 2, 1, 1, -1, -1, -1])]
+
+>>> optimize("examples/NestedWhile.c")
+[([(0, 0, 'b'), (1, 0, 'd'), (1, 1, 'd')], [-1, -1])]
+
+>>> optimize("examples/EmptyWhile.c")
+[([], [])]
+
+>>> optimize("examples/EmptyFor.c")
+[([(0, 0, 'i')], [-1])]
+
+>>> optimize("examples/EmptyDoWhile.c")
+[([], [])]
+
+>>> optimize("examples/SeqDoWhile.c")
+[([(0, 1, 'c'), (1, 2, 'b')], [1, 1, 1]), ([(1, 0, 'b'), (2, 1, 'c'), (3, 3, 'd')], [3, 2, 1, -1])]
+
+>>> optimize("examples/SeqFor.c")
+[([(1, 0, 'b'), (2, 1, 'c'), (3, 3, 'd')], [3, 2, 1, -1]), ([(1, 0, 'b'), (2, 1, 'c'), (3, 3, 'd'), (4, 4, 'i')], [3, 2, 1, -1, -1])]
+
+>>> optimize("examples/SeqWhile.c")
+[([(0, 1, 'c'), (1, 2, 'b')], [1, 1, 1]), ([(1, 0, 'b'), (2, 1, 'c'), (3, 3, 'd')], [3, 2, 1, -1])]
+
+>>> optimize("examples/WhileBreak.c")
+[([(0, 3, 'a'), (1, 0, 'b'), (2, 0, 'c'), (2, 1, 'c'), (4, 4, 'd')], [3, 2, 1, 3, -1])]
+
+[([(2, 0, 'c'), (1, 0, 'b'), (2, 1, 'c'), (0, 3, 'a'), (4, 4, 'd')], [3, 2, 1, 3, -1])]
+
+>>> optimize("examples/NestedInfinite.c")
+[([(0, 1, 'x'), (2, 0, 'x'), (2, 1, 'x'), (3, 3, 'y')], [2, 2, 1, -1])]
+
+>>> optimize("examples/EmptyForInit.c")
+[([(1, 0, 'b'), (2, 1, 'c'), (3, 3, 'i')], [3, 2, 1, -1])]
+
+>>> optimize("examples/EmptyForUpdate.c")
+[([(1, 0, 'b'), (2, 1, 'c')], [3, 2, 1])]
+
+>>> optimize("break_ex/if_break.c")
+[([(2, 0, 'w'), (3, 3, 'i')], [2, 1, 1, -1])]
+
+>>> optimize("break_ex/While_nested_outer_break.c")
+[([(0, 1, 'x'), (0, 2, 'x'), (1, 2, 'x'), (4, 1, 'i'), (4, 4, 'i')], [1, -1, -1, 1, -1])]
+
+>>> optimize("break_ex/While_nested_if_break.c")
+[([(0, 1, 'x'), (0, 2, 'x'), (1, 1, 'w'), (1, 2, 'x'), (1, 3, 'w'), (4, 1, 'i'), (4, 4, 'i')], [1, -1, -1, -1, -1])]
+
+>>> optimize("break_ex/While_outer_break.c")
+[([], [1, 1, 1, 1, 1])]
