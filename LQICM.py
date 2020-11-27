@@ -76,7 +76,7 @@ def visit_ast(ast):
 
 def optimize(filename):
     """ Parses the file and modifies the AST"""
-    ast = parse_file(filename, use_cpp=True)
+    ast = parse_file(filename, use_cpp=True, cpp_path="gcc", cpp_args=['-E'])  #replace cpp with gcc to remove comments
     loops = visit_ast(ast)
     deps = []
     for i in range(len(loops)):
