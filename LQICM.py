@@ -44,7 +44,7 @@ class LoopVisitor:
 def convert(node):
     loop_node = node.loop_node
     parent_index = node.parent[1]  # index in the AST of the original loop
-    node.parent[0].block_items.pop(parent_index)  # remove the orignal loop from AST
+    node.parent[0].block_items.pop(parent_index)  # remove the original loop from AST
     body = []  # list of new AST nodes for each peel
     original_body = []
     if loop_node.stmt.block_items is not None:
