@@ -33,3 +33,12 @@ Remark:
 
 The `.c` file given needs to contain only functions (no
 `includes` or other macros etc…)
+
+
+## Testing
+
+To execute unit tests run
+
+```text
+python LQICM.py
+```
