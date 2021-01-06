@@ -37,4 +37,4 @@ jobs:
 
     - name: Run unit tests
       run: |
-        LQICM.py
+        python LQICM.py
