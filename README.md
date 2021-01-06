@@ -33,3 +33,19 @@ Remark:
 
 The `.c` file given needs to contain only functions (no
 `includes` or other macros etc…)
+
+## Testing
+
+To run unit tests locally run:
+
+```text
+python LQICM.py
+``` 
+
+There will be no output if all tests pass.
+
+For verbose test output run
+
+```text
+python -m doctest -v test_examples.txt
+```
