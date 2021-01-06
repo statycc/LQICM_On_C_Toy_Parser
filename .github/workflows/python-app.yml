@@ -25,7 +25,7 @@ jobs:
         python -m pip install --upgrade pip
         # pip install flake8 pytest
                 
-        # this next one will work after merging PR #6 will do this manually until then
+        # this next one will work after merging PR #12 will do this manually until then
         # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         
         pip install pycparser

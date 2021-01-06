@@ -10,13 +10,6 @@ quasi-invariant inner loop.
 
 This uses the [pycparser](https://github.com/eliben/pycparser).
 
-Install project dependencies by running the following command:
-
-```text
-python -m pip install -r requirements.txt
-```
-
-
 ## Installation 
 
 Install [pycparser](https://github.com/eliben/pycparser).
@@ -33,3 +26,19 @@ Remark:
 
 The `.c` file given needs to contain only functions (no
 `includes` or other macros etc…)
+
+## Testing
+
+To run unit tests locally run:
+
+```text
+python LQICM.py
+``` 
+
+There will be no output if all tests pass.
+
+For verbose test output run
+
+```text
+python -m doctest -v test_examples.txt
+```
