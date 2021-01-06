@@ -1,7 +1,7 @@
 >>> from LQICM import optimize
 
 >>> optimize("examples/DoWhile.c")
-[([(1, 1, 'i')], [2, -1])]
+[([(1, 1, 'i')], [1, -1])]
 
 >>> optimize("examples/For.c")
 [([(1, 0, 'b'), (2, 1, 'c'), (3, 3, 'd'), (4, 4, 'i')], [3, 2, 1, -1, -1])]
