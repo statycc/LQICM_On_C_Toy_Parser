@@ -1,6 +1,6 @@
 # ChangeLog
 
-## [2.0.0](https://github.com/ThomasRuby/LQICM_On_C_Toy_Parser/tree/7e590e400a84ca8d585535c24c06a2b3ef39bf7f) (2020-10-20)
+## [3.0.0](https://github.com/ThomasRuby/LQICM_On_C_Toy_Parser/tree/e21a3c9fb9348ec7a31655c7de73d8dbf6ba673f) (2020-10-28)
 
 ### Added
 - handle DoWhile and For Loops
@@ -35,6 +35,6 @@
 - case for dowhile/for loops when peeling
 
 
-## [1.0.0](https://github.com/ThomasRuby/LQICM_On_C_Toy_Parser/tree/69276fc9d80b3d2d2fdff74375c5714aead23c15) (2017-05-09)
+## [2.0.0](https://github.com/ThomasRuby/LQICM_On_C_Toy_Parser/tree/1f7da67a70e6e9e9ab74d962bbf661b4abf5d8f0) (2017-05-09)
 
-Initial release
+## [1.0.0](https://github.com/ThomasRuby/LQICM_On_C_Toy_Parser/tree/02edc948a144235706e647d1c170b00af1d26795) (2017-01-28)
