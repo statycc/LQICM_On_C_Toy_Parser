@@ -10,9 +10,13 @@ quasi-invariant inner loop.
 
 This uses the [pycparser](https://github.com/eliben/pycparser).
 
-## Installation 
+## Installation
 
-Install [pycparser](https://github.com/eliben/pycparser).
+Install project dependencies by running the following command:
+
+```text
+python -m pip install -r requirements.txt
+```
 
 Run on examples:
 
