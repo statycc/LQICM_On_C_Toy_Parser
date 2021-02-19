@@ -104,4 +104,4 @@ if __name__ == "__main__":
         optimize(sys.argv[1])
     else:
         import doctest
-        doctest.testfile("test_examples.txt", raise_on_error=True)
+        doctest.testfile("test_examples.txt")
