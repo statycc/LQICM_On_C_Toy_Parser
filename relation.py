@@ -16,7 +16,10 @@ class VarVisitor(c_ast.NodeVisitor):
 def compute_rel(command, cond_var=[]):
     """Compose and create Relation depending on the type of command """
     if isinstance(command, c_ast.Assignment):
-        rel = compute_command(command.lvalue.name, command.rvalue, cond_var)
+        if isinstance(command.lvalue, c_ast.ArrayRef):
+            rel = compute_command(list_var(command.lvalue.name), command.rvalue, cond_var, list_var(command.lvalue.subscript))
+        else:
+            rel = compute_command(command.lvalue.name, command.rvalue, cond_var)
     elif isinstance(command, c_ast.Decl):
         if command.init is None:
             rel = compute_command(command.type.declname, [], cond_var)
@@ -42,9 +45,9 @@ def compute_rel(command, cond_var=[]):
     return rel
 
 
-def compute_command(target, sources, cond_var):
+def compute_command(target, sources, cond_var, sub_var = []):
     target_var = list(target)  # variable being assigned to
-    source_vars = list(set(list_var(sources)))
+    source_vars = list(set(list_var(sources)+ sub_var))
     lvars = list(set(target_var) | set(source_vars) | set(cond_var))  # remove repeat variable names
     # set a strong dependency between the source (and possible vars in the condition) to the target variable
     return strong_dep_rel(lvars, target_var, source_vars + cond_var)
