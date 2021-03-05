@@ -88,13 +88,14 @@ def optimize(filename):
     """ Parses the file and modifies the AST"""
     ast = parse_file(filename, use_cpp=True, cpp_path="gcc", cpp_args=['-E'])  # replace cpp with gcc to remove comments
     loops = visit_ast(ast)
+    loop_count = len(loops)
     deps = []
-    for i in range(len(loops)):
+    for i in range(loop_count):
         deps.append(opt(loops[i]))
         loops = visit_ast(ast)
     generator = c_generator.CGenerator()
     newast = generator.visit(ast)
-    with open(os.path.join('./output/', "opt_" + os.path.basename(filename)), "w")  as text_file:
+    with open(os.path.join('./output/', "opt_" + os.path.basename(filename)), "w") as text_file:
         print(format(newast), file=text_file)
     return deps
 
