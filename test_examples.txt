@@ -61,3 +61,15 @@
 
 >>> optimize("break_ex/While_outer_break.c")
 [([], [1, 1, 1, 1, 1])]
+
+>>> optimize("examples/List_infinite_source.c")
+[([(2, 1, 'c'), (3, 0, 'i'), (3, 3, 'i')], [-1, 2, 1, -1])]
+
+>>> optimize("examples/List_infinite_target.c")
+[([(0, 2, 'a'), (1, 0, 'b'), (3, 1, 'c'), (4, 2, 'i'), (4, 4, 'i')], [3, 2, -1, 1, -1])]
+
+>>> optimize("examples/List_Peel_target.c")
+[([(0, 2, 'a'), (1, 0, 'b'), (1, 2, 'b'), (3, 1, 'c'), (4, 4, 'i')], [3, 2, 3, 1, -1])]
+
+>>> optimize("examples/List_Peel_source.c")
+[([(1, 0, 'b'), (2, 1, 'c'), (3, 3, 'i')], [3, 2, 1, -1])]
